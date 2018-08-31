@@ -5,7 +5,16 @@ const bcrypt = require('bcrypt-nodejs');
 // Define our model
 const userSchema = new Schema({
   email: { type: String, unique: true, lowercase: true },
-  password: String
+  password: { type: String, default: null },
+  hasLoggedInLocally: { type: Boolean, default: false },
+  hasLoggedInWithGoogle:{ type: Boolean, default: false },
+  hasLoggedInWithFacebook: {type: Boolean, default: false },
+  googleAccountLinkedWithLocal: {type: Boolean, default: false },
+  facebookAccountLinkedWithLocal: { type: Boolean, default: false },
+  googleAccountEmailVerified: { type: Boolean, default: false},
+  facebookAccountEmailVerified: { type: Boolean, default: false},
+  active: { type: Boolean, default: false},
+  hash: { type: Number, default: 0},
 });
 
 // On Save Hook, encrypt password

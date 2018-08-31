@@ -8,7 +8,12 @@ const bodyParser = require('body-parser');
 const keys = require('./config/keys');
 const app = express();
 const router = require('./routes/authRoutes')
-//const http = require('http')
+
+// [] implement facebook strategy
+// [] do a better job making sure code is DRY
+// [] email verification is all I need for an MVP, two factor is a stretch
+// [] figure out how to link accounts
+// [] work on what to do with errors sent back to the front end.
 
 mongoose.Promise = global.Promise;
 mongoose.connect(keys.mongoURI);

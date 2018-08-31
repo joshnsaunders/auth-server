@@ -24,8 +24,6 @@ module.exports = app => {
     let token = req.headers.authorization;
     let payload = jwt.decode(token, config.secret)
 
-    // console.log('req.body 27', req.body.searchBody);
-
     const search = new Search ({
       body:req.body.searchBody,
       _user:payload.sub
