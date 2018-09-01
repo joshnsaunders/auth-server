@@ -24,8 +24,6 @@ module.exports = app => {
     let token = req.headers.authorization;
     let payload = jwt.decode(token, config.secret)
 
-    console.log('req.body 27', req.body.locationBody);
-
     const location = new Location ({
       body:req.body.locationBody,
       _user:payload.sub

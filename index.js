@@ -9,10 +9,15 @@ const keys = require('./config/keys');
 const app = express();
 const router = require('./routes/authRoutes')
 
+// [] password reset through email
 // [] implement facebook strategy
-// [] do a better job making sure code is DRY
+// [x] do a better job making sure code is DRY
 // [] email verification is all I need for an MVP, two factor is a stretch
 // [] figure out how to link accounts
+// - local, then social, go to link account page and ask for the password
+// - ask to link only once per social log in Strategy
+// - social, then local add password and verify email and then
+// - consider existing strategies linked
 // [] work on what to do with errors sent back to the front end.
 
 mongoose.Promise = global.Promise;
@@ -28,7 +33,6 @@ require('./services/passport');
 require('./models/user');
 require('./models/Search');
 require('./models/Location');
-
 
 require('./routes/authRoutes')(app);
 require('./routes/recentSearches')(app);

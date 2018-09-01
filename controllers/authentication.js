@@ -3,7 +3,7 @@ const User = require('../models/user');
 const config = require('../config/keys');
 const nodemailer = require('nodemailer');
 const tokenForUser = require('../core/core').tokenForUser
-const smtpTransport = require('../services/nodemailer').smtpTransport
+const smtpTransport = require('../core/core').smtpTransport
 
 exports.signin = (req, res, next) => {
   res.send({
@@ -76,4 +76,53 @@ exports.emailVerification = (req, res, next) => {
       res.redirect(`http://www.localhost:3001/user?token=${token}`)
     }
   })
+}
+
+// redirect to front end with emailResetHash on click from email link
+// then component finds the user with the hash and returns the email
+// then user enters a new password and confirms
+// then the user submits it and backend saves, encrypts and salts the new password
+
+exports.emailResetPassword = ( req, res, next ) => {
+const email = req.body.email
+const urgh = req.query
+
+User.findOne({ email: email }, (err, existingUser) => {
+  if (err) { return next (err) }
+
+  if ( existingUser ) {
+    const user = existingUser;
+    let hash = Math.random().toString()
+    hash = hash.slice(2, hash.length)
+
+    user.emailResetHash = hash
+    user.save((err) => {
+      if (err) { return next(err); }
+    })
+
+    let link = `http://localhost:3000/reset?id=${user.emailResetHash}&email=${user.email}`;
+    mailOptions = {
+      from:config.emailUserName,
+      to:"joshnsaunders@gmail.com",
+      subject:"Enroll Me - Reset Your Password",
+      html:"Click link to reset password <a href=" + link + ">Click to reset password</a>"
+    }
+
+    smtpTransport.sendMail(mailOptions, function(error, response){
+     if(error){
+        res.end("error");
+     } else {
+            console.log("Message sent: " + response.message);
+         }
+    });
+
+
+
+  }
+
+})
+res.send('the end of reset password')
+//res.redirect(`http://www.localhost:3001/`)
+//   const token  = tokenForUser(user)
+
 }

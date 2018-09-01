@@ -5,7 +5,7 @@ const jwt = require('jwt-simple')
 const config = require('../config/keys');
 const facebook = require('passport-facebook');
 const nodemailer = require('nodemailer');
-const smtpTransport = require('../services/nodemailer').smtpTransport
+const smtpTransport = require('../core/core').smtpTransport
 const tokenForUser = require('../core/core').tokenForUser
 
 const requireAuth = passport.authenticate('jwt', { session: false});
@@ -26,7 +26,7 @@ module.exports = app => {
 
       mailOptions = {
         from:"joshnsaunders@gmail.com",
-        to:"joshnsaunders@gmail.com",
+        to:user.email,
         subject:"test test test",
         html:"Click link to verify account <a href=" + link + ">Click here to verify</a>"
       }
@@ -48,6 +48,9 @@ module.exports = app => {
   })
 
   app.get('/verify/user', Authentication.emailVerification)
+
+  app.post('/resetpassword', Authentication.emailResetPassword)
+
 
   app.get(`${heroku}/api/logout`, (req, res) => {
     req.logout();

@@ -7,12 +7,8 @@ const LocalStrategy = require('passport-local');
 const GoogleStrategy = require('passport-google-oauth20').Strategy
 const jwt = require('jwt-simple');
 const config = require('../config/keys');
-const core = require('../core/core');
+const tokenForUser = require('../core/core').tokenForUser;
 
-const tokenForUser = (user) => {
-  const timestamp = new Date().getTime();
-  return jwt.encode({ sub:user.id, iat: timestamp }, config.secret);
-}
 //const FacebookStrategy = require('passport-facebook').Strategy;
 
 const localOptions = { usernameField: 'email'}
