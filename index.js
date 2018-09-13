@@ -9,6 +9,8 @@ const keys = require('./config/keys');
 const app = express();
 const router = require('./routes/authRoutes')
 
+// [] add a check to make sure code verification and resetting only runs when then
+// hash doesn't equal 0 to prevent anyone guessing it.
 // [] implement facebook strategy
 // [] email verification is all I need for an MVP, two factor is a stretch
 // [] figure out how to link accounts

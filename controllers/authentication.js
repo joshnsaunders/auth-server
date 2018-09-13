@@ -8,10 +8,13 @@ const bcrypt = require('bcrypt-nodejs');
 const mongoose = require('mongoose');
 
 exports.signin = (req, res, next) => {
-  console.log('req.body', req.body);
-  res.send({
-    token:tokenForUser(req.user),
-  })
+  if (req.user.active){
+    res.send({
+      token:tokenForUser(req.user),
+    })
+  }
+res.status(422).send({ error:'Please verify email'})
+
 }
 
 exports.signup = (req, res, next) => {
@@ -63,22 +66,27 @@ exports.signup = (req, res, next) => {
 
 exports.emailVerification = (req, res, next) => {
   const hash = req.query.id
+  console.log('HASH', hash);
   if (!hash) {
     return res.status(422).send({error:'Something went wrong'})
   };
-  User.findOne({hash: hash}, (err, existingUser) => {
-    if (err) {return next(err)}
-    if ( existingUser ){
-      const user = existingUser;
-      user.active = true;
-      user.hash = 0;
-      user.save((err) => {
-        if (err) { return next(err); }
-      })
-      const token = tokenForUser(user)
-      res.redirect(`http://www.localhost:3001/user?token=${token}`)
-    }
-  })
+
+
+    User.findOne({hash: hash}, (err, existingUser) => {
+      if (err) { console.log('error, return next err');return next(err)}
+      if ( existingUser ){
+        const user = existingUser;
+        console.log('EXISTING', existingUser);
+        user.active = true;
+        user.hash = 0;
+        user.save((err) => {
+          if (err) { return next(err); }
+        })
+        const token = tokenForUser(user)
+        res.redirect(`http://www.localhost:3001/user?token=${token}`)
+      }
+    })
+    res.redirect('http://localhost:3001')
 }
 
 exports.newPassword = (req, res, next) => {
@@ -97,7 +105,6 @@ exports.newPassword = (req, res, next) => {
         if (err) { return next(err); }
       })
     }
-
   })
 
  return

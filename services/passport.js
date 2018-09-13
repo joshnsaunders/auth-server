@@ -11,7 +11,6 @@ const tokenForUser = require('../core/core').tokenForUser;
 const bcrypt = require('bcrypt-nodejs');
 const mongoose = require('mongoose');
 
-
 //const FacebookStrategy = require('passport-facebook').Strategy;
 
 const localOptions = { usernameField: 'email'}
