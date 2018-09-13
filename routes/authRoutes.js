@@ -12,12 +12,6 @@ const requireAuth = passport.authenticate('jwt', { session: false});
 const requireSignin = passport.authenticate('local', { session: false });
 const requireGoogleLogIn = passport.authenticate('google', { session: false, scope: ['profile', 'email'] });
 
-// when I use email verification the code is re-salting the already salted password
-// so the original salted password is a match, but the original plain text password is not
-// need to add a check in the user model err somewhere to make sure that I am not resalting the password
-// when I verify over email.
-
-
 module.exports = app => {
   const heroku = 'https://localhost:3000'
 

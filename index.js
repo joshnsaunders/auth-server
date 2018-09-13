@@ -9,9 +9,7 @@ const keys = require('./config/keys');
 const app = express();
 const router = require('./routes/authRoutes')
 
-// [] password reset through email
 // [] implement facebook strategy
-// [x] do a better job making sure code is DRY
 // [] email verification is all I need for an MVP, two factor is a stretch
 // [] figure out how to link accounts
 // - local, then social, go to link account page and ask for the password

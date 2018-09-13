@@ -13,10 +13,6 @@ const mongoose = require('mongoose');
 
 
 //const FacebookStrategy = require('passport-facebook').Strategy;
-// in the local strategy the !isMatch was returning true even though
-// there was a match, not sure what is up with that, but I commented it out
-// in order to token generation with updated passwords, which now works.
-
 
 const localOptions = { usernameField: 'email'}
 const localLogin = new LocalStrategy (localOptions, (email, password, done) => {
