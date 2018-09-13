@@ -8,8 +8,15 @@ const GoogleStrategy = require('passport-google-oauth20').Strategy
 const jwt = require('jwt-simple');
 const config = require('../config/keys');
 const tokenForUser = require('../core/core').tokenForUser;
+const bcrypt = require('bcrypt-nodejs');
+const mongoose = require('mongoose');
+
 
 //const FacebookStrategy = require('passport-facebook').Strategy;
+// in the local strategy the !isMatch was returning true even though
+// there was a match, not sure what is up with that, but I commented it out
+// in order to token generation with updated passwords, which now works.
+
 
 const localOptions = { usernameField: 'email'}
 const localLogin = new LocalStrategy (localOptions, (email, password, done) => {
@@ -18,8 +25,10 @@ const localLogin = new LocalStrategy (localOptions, (email, password, done) => {
     if (!user) { return done(null, false); }
 
     user.comparePassword(password, (err, isMatch) => {
-      if (err) { return done(err); }
-      if (!isMatch) { return done(null, false); }
+      if (err) {return done(err) }
+      console.log('user', user);
+      console.log('ismatch', isMatch);
+     if (!isMatch) { console.log('error');return done(null, false); }
       return done(null, user);
     })
   })

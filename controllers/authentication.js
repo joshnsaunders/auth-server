@@ -4,8 +4,11 @@ const config = require('../config/keys');
 const nodemailer = require('nodemailer');
 const tokenForUser = require('../core/core').tokenForUser
 const smtpTransport = require('../core/core').smtpTransport
+const bcrypt = require('bcrypt-nodejs');
+const mongoose = require('mongoose');
 
 exports.signin = (req, res, next) => {
+  console.log('req.body', req.body);
   res.send({
     token:tokenForUser(req.user),
   })
@@ -26,6 +29,7 @@ exports.signup = (req, res, next) => {
     if (err) { return next(err); }
 
     if (existingUser) {
+      console.log('email is in use');
       return res.status(422).send({ error: 'Email is in use'});
     }
 
@@ -64,7 +68,6 @@ exports.emailVerification = (req, res, next) => {
   };
   User.findOne({hash: hash}, (err, existingUser) => {
     if (err) {return next(err)}
-
     if ( existingUser ){
       const user = existingUser;
       user.active = true;
@@ -78,14 +81,30 @@ exports.emailVerification = (req, res, next) => {
   })
 }
 
-// redirect to front end with emailResetHash on click from email link
-// then component finds the user with the hash and returns the email
-// then user enters a new password and confirms
-// then the user submits it and backend saves, encrypts and salts the new password
+exports.newPassword = (req, res, next) => {
+  const emailHash = req.body.hash
+  const email = req.body.email
+  const password = req.body.newPassword
+
+  User.findOne({emailResetHash: emailHash}, (err, existingUser) => {
+    if (err) { return next (err) }
+    if (existingUser ) {
+      console.log('EXISTING USER', existingUser);
+      const user  = existingUser
+      user.password = password;
+
+      user.save((err) => {
+        if (err) { return next(err); }
+      })
+    }
+
+  })
+
+ return
+}
 
 exports.emailResetPassword = ( req, res, next ) => {
 const email = req.body.email
-const urgh = req.query
 
 User.findOne({ email: email }, (err, existingUser) => {
   if (err) { return next (err) }
@@ -100,7 +119,7 @@ User.findOne({ email: email }, (err, existingUser) => {
       if (err) { return next(err); }
     })
 
-    let link = `http://localhost:3000/reset?id=${user.emailResetHash}&email=${user.email}`;
+    let link = `http://localhost:3001/reset?id=${user.emailResetHash}&email=${user.email}`;
     mailOptions = {
       from:config.emailUserName,
       to:"joshnsaunders@gmail.com",
@@ -115,11 +134,7 @@ User.findOne({ email: email }, (err, existingUser) => {
             console.log("Message sent: " + response.message);
          }
     });
-
-
-
   }
-
 })
 res.send('the end of reset password')
 //res.redirect(`http://www.localhost:3001/`)
